@@ -96,6 +96,7 @@ func (c *Context) SetErrorResponseCode(code int) {
 type Handler func(*Context) (interface{}, error)
 
 type Server struct {
+	Mux        *http.ServeMux
 	Prefix     string
 	registered bool
 	handlers   map[string]Handler
@@ -180,7 +181,7 @@ func isByteArray(a interface{}) bool {
 
 func (s *Server) HandleFunc(resource string, handler Handler) {
 	if !s.registered {
-		http.HandleFunc(s.Prefix, s.serveHTTP)
+		s.Mux.HandleFunc(s.Prefix, s.serveHTTP)
 		s.registered = true
 	}
 	if s.handlers == nil {
